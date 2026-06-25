@@ -24,22 +24,349 @@
 </div>
 <div class="container-fluid">
     <div class="row" style="height: 100vh;">
-        <div class="col-2">
-            <ul class="nav flex-column">
-                <li class="nav-item" style="background-color: #49aaff;">
-                    <a class="nav-link" style="color: white;" th:href="@{/user}">User</a>
-                </li>
-                <li class="nav-item" style="background-color: #49aaff;margin-top: 10px;">
-                    <a class="nav-link" style="color: white;" th:href="@{/admin}">Admin</a>
-                </li>
-            </ul>
+        <div class="col bg-light">
+            <div class="col" style="background-color: #e6e6e6;"><h3>All users</h3></div>
+            <div class="col p-3" style="background-color: white;">
+                <table class="table table-striped" id="adminTable">
+                    <thead>
+                    <th>ID</th>
+                    <th>User Name</th>
+                    <th>Last Name</th>
+                    <th>Age</th>
+                    <th>Email</th>
+                    <th>Edit</th>
+                    <th>Delete</th>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <a id="btNew" class="btn btn-primary" onclick="addclick()">Add User</a>
         </div>
-        <div class="col-10 bg-light">
-
+    </div>
+</div>
+<!-- modal edit-->
+<div id='myModal' class='modal fade in' tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+        <div class="modal-content" style="overflow-y: auto;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editTitle">Edit user</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!--/*@thymesVar id="user" type="ru.kata.spring.boot_security.demo.Model.User"*/-->
+                <form class="col" id="frmEdit" onsubmit="onSubmitAction(this)" th:object="${user}" >
+                    <div style="text-align: center;" class="col-8 mx-auto">
+                        <div class="form-group row">
+                            <label class="col col-form-label" for="id"><strong>Id</strong></label>
+                            <input class="form-control-plaintext border" id="id" type="text" readonly="readonly">
+                        </div>
+                        <div class="form-group row">
+                            <label class="col col-form-label" for="username"><strong>User name</strong></label>
+                            <input class="form-control-plaintext border" id="username" type="text" >
+                        </div>
+                        <div class="form-group row">
+                            <label class="col col-form-label" for="lastname"><strong>Last name</strong></label>
+                            <input class="form-control-plaintext border" id="lastname" type="text" >
+                        </div>
+                        <div class="form-group row">
+                            <label class="col col-form-label" for="age"><strong>Age</strong></label>
+                            <input class="form-control-plaintext border" id="age" >
+                        </div>
+                        <div class="form-group row">
+                            <label class="col col-form-label" for="email"><strong>Email</strong></label>
+                            <input class="form-control-plaintext border" id="email" type="text" >
+                        </div>
+                        <div class="form-group row">
+                            <label class="col col-form-label" for="password"><strong>Password</strong></label>
+                            <input class="form-control-plaintext border" id="password" type="password" >
+                        </div>
+                        <div class="form-group row">
+                            <label class="col col-form-label" for="roled"><strong>Role</strong></label>
+                            <select id="roled" multiple class="custom-select"></select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button class="btn btn-success" name="action" type="submit" value="save">Edit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- modal delete-->
+<div id='delModal' class='modal fade in' tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+        <div class="modal-content" style="overflow-y: auto;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="delTitle">Delete user</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="col" id="frmDel" onsubmit="onDelAction(this)" th:object="${user}" >
+                    <div style="text-align: center;" class="col-8 mx-auto">
+                        <div class="form-group row">
+                            <label class="col col-form-label" for="id"><strong>Id</strong></label>
+                            <input class="form-control-plaintext border" id="id" type="text" readonly="readonly">
+                        </div>
+                        <div class="form-group row">
+                            <label class="col col-form-label" for="username"><strong>User name</strong></label>
+                            <input class="form-control-plaintext border" id="username" type="text" readonly="readonly">
+                        </div>
+                        <div class="form-group row">
+                            <label class="col col-form-label" for="lastname"><strong>Last name</strong></label>
+                            <input class="form-control-plaintext border" id="lastname" type="text" readonly="readonly">
+                        </div>
+                        <div class="form-group row">
+                            <label class="col col-form-label" for="age"><strong>Age</strong></label>
+                            <input class="form-control-plaintext border" id="age" readonly="readonly">
+                        </div>
+                        <div class="form-group row">
+                            <label class="col col-form-label" for="email"><strong>Email</strong></label>
+                            <input class="form-control-plaintext border" id="email" type="text" readonly="readonly">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button class="btn btn-danger" name="action" type="submit" value="delete">Delete</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- modal new user-->
+<div id='addModal' class='modal fade in' tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+        <div class="modal-content" style="overflow-y: auto;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addTitle">Add user</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!--/*@thymesVar id="user" type="ru.kata.spring.boot_security.demo.Model.User"*/-->
+                <form class="col" id="frmAdd" onsubmit="onNew(this)" th:object="${user}" >
+                    <div style="text-align: center;" class="col-8 mx-auto">
+                        <div class="form-group row">
+                            <label class="col col-form-label" for="username"><strong>User name</strong></label>
+                            <input class="form-control-plaintext border" id="username" type="text" >
+                        </div>
+                        <div class="form-group row">
+                            <label class="col col-form-label" for="lastname"><strong>Last name</strong></label>
+                            <input class="form-control-plaintext border" id="lastname" type="text" >
+                        </div>
+                        <div class="form-group row">
+                            <label class="col col-form-label" for="age"><strong>Age</strong></label>
+                            <input class="form-control-plaintext border" id="age" >
+                        </div>
+                        <div class="form-group row">
+                            <label class="col col-form-label" for="email"><strong>Email</strong></label>
+                            <input class="form-control-plaintext border" id="email" type="text" >
+                        </div>
+                        <div class="form-group row">
+                            <label class="col col-form-label" for="password"><strong>Password</strong></label>
+                            <input class="form-control-plaintext border" id="password" type="password" >
+                        </div>
+                        <div class="form-group row">
+                            <label class="col col-form-label" for="roles"><strong>Role</strong></label>
+                            <select id="roles" multiple class="custom-select"></select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button class="btn btn-success" name="action" type="submit" value="save">Add new user</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>
+<script>
+    $(async function () {
+        await getUsersTable();
+    })
+    async function getUsersTable() {
+        let temp = "";
+        const table = document.querySelector("#adminTable tbody");
+        await fetch("/clients", { cache: 'no-store', headers: {'Pragma': 'no-cache'}})
+            .then(res => res.json())
+            .then(users => users.forEach(user => {
+                let roles = ""
+                user.roles.forEach(role => roles += role.name + ' ')
+                temp += `
+                <tr>
+                    <td>${user.id}</td>
+                    <td>${user.username}</td>
+                    <td>${user.lastname}</td>
+                    <td>${user.age}</td>
+                    <td>${user.email}</td>
+                    <td>
+                        <a id="btEdit" class="btn btn-success" onclick="edclick(${user.id})">Edit</a>
+                    </td>
+                    <td>
+                        <a id="btDel" class="btn btn-danger" onclick="delclick(${user.id})">Delete</a>
+                    </td>
+                </tr>
+            `;
+            }))
+        table.innerHTML = temp;
+    }
+    async  function  edclick(id) {
+        let  usrole = []; // Объявление переменной
+        let form = document.getElementById('frmEdit');
+        await  fetch("/client/"+id, { cache: 'no-store', headers: {'Pragma': 'no-cache'}})
+            .then(res => res.json())
+            .then(user => {
+                form.id.value = user.id;
+                form.username.value = user.username;
+                form.lastname.value = user.lastname;
+                form.age.value = user.age;
+                form.email.value = user.email;
+                usrole.push(user.roles);
+                console.log(user);
+            })
+        var tmprole= usrole[0];console.log(tmprole);
+        const rolesSelect = document.getElementById('roled');
+        rolesSelect.innerHTML = ''; // Очистка всех элементов <option>
+        await fetch(`/roles`)
+            .then(response => response.json())
+            .then(roles => {roles.forEach(role => {
+                const option = document.createElement('option');
+                option.value = role.id;
+                option.textContent = role.name;
+                // Выделение ролей, принадлежащих пользователю
+                if (tmprole.some(userRole => userRole.id === role.id)) {
+                    option.selected = true;
+                }
+                rolesSelect.appendChild(option);
+            })})
+            .catch(error => console.error('Error fetching user roles:', error));
+        $('#myModal').modal({
+            backdrop: 'static',
+            keyboard: true
+        }, 'show');
+        return false;
+    };
+    function onSubmitAction(elem) {
+        event.preventDefault();
+        const rolesSelect = document.getElementById('roled');
+        const selectedRoles = Array.from(rolesSelect.selectedOptions).map(option => option.value);
+        let id=elem.id.value;
+        let username=elem.username.value;
+        let lastname=elem.lastname.value;
+        let age=elem.age.value;
+        let email=elem.email.value;
+        let password=elem.password.value;
+        console.log(id);
+        var res =(async () => {
+            const res = await fetch('/client/'+id,{
+                credentials: 'include',
+                headers: {"Content-Type": "application/json",},
+                method:'PUT',
+                body: JSON.stringify({id: id,username: username,lastname: lastname,email: email,age: age,password: password, roles: selectedRoles})
+            })
+                .then(res => res.text()) // or res.json()
+                .then(res => console.log(res))
+        })();
+        $('#myModal').modal('hide');
+        setTimeout(function () {
+            getUsersTable();
+        }, 1000);
+        return false;
+    }
+    function delclick(id) {
+        let form = document.getElementById('frmDel');
+        fetch("/client/"+id, { cache: 'no-store', headers: {'Pragma': 'no-cache'}})
+            .then(res => res.json())
+            .then(user => {
+                form.id.value = user.id;
+                form.username.value = user.username;
+                form.lastname.value = user.lastname;
+                form.age.value = user.age;
+                form.email.value = user.email;
+            })
+        $('#delModal').modal({
+            backdrop: 'static',
+            keyboard: true
+        }, 'show');
+        return false;
+    };
+    function onDelAction(elem) {
+        event.preventDefault();
+        let id=elem.id.value;
+        fetch('/delete/' + id, {
+            method: 'DELETE',
+        })
+            .then(res => res.text()) // or res.json()
+            .then(res => console.log(res));
+        $('#delModal').modal('hide');
+        setTimeout(function () {
+            getUsersTable();
+        }, 1000);
+        return false;
+    }
+    function addclick() {
+        const rolesSelect = document.getElementById('roles');
+        while (rolesSelect.options.length > 0) {
+            rolesSelect.remove(0);
+        }
+        fetch(`/roles`)
+            .then(response => response.json())
+            .then(roles => {roles.forEach(role => {
+                const option = document.createElement('option');
+                option.value = role.id;
+                option.textContent = role.name;
+                rolesSelect.appendChild(option);
+            })})
+            .catch(error => console.error('Error fetching user roles:', error));
+        $('#addModal').modal({
+            backdrop: 'static',
+            keyboard: true
+        }, 'show');
+        return false;
+    };
+    function onNew(elem) {
+        event.preventDefault();
+        const rolesSelect = document.getElementById('roles');
+        const selectedRoles = Array.from(rolesSelect.selectedOptions).map(option => option.value);
+
+        let username=elem.username.value;
+        let lastname=elem.lastname.value;
+        let age=elem.age.value;
+        let email=elem.email.value;
+        let password=elem.password.value;
+        var res =(async () => {
+            const res = await fetch('/client',{
+                credentials: 'include',
+                headers: {"Content-Type": "application/json",},
+                method:'POST',
+                body: JSON.stringify({username: username,lastname: lastname,email: email,age: age,password: password, roles: selectedRoles})
+            })
+                .then(res => res.text()) // or res.json()
+                .then(res => console.log(res))
+        })();
+        $('#addModal').modal('hide');
+        setTimeout(function () {
+            getUsersTable();
+        }, 1000);
+        clearAllFormInputs();
+        return false;
+    }
+    function clearAllFormInputs() {
+        let form = document.getElementById('frmAdd');
+        let inputs = form.getElementsByTagName('input');
+        for (let input of inputs)
+            input.value = '';
+    }
+</script>
 </body>
 </html>
