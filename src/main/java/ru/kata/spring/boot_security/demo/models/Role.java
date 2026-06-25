@@ -1,27 +1,32 @@
 package ru.kata.spring.boot_security.demo.models;
 
-import com.sun.istack.NotNull;
 import org.springframework.security.core.GrantedAuthority;
-
+import org.springframework.security.core.userdetails.UserDetails;
+import java.util.Collection;
+import java.util.Set;
+import javax.validation.constraints.Size;
 import javax.persistence.*;
+
 
 @Entity
 @Table(name = "role")
 public class Role implements GrantedAuthority {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
-
-    @Column(name = "role")
-    private String role;
-
-    public Role(){
-
+    private Long id;
+    private String name;
+    @Transient
+    @ManyToMany(mappedBy = "roles")
+    private Set<User> users;
+    public Role() {
     }
 
-    public Role(Long id, String role){
+    public Role(Long id) {
         this.id = id;
-        this.role = role;
+    }
+
+    public Role(Long id, String name) {
+        this.id = id;
+        this.name = name;
     }
 
     public Long getId() {
@@ -32,23 +37,28 @@ public class Role implements GrantedAuthority {
         this.id = id;
     }
 
-    public String getRole() {
-        return role;
+    public String getName() {
+        return name;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    @Override
-    public String toString() {
-        return "Role{" +
-                "role='" + role + '\'' +
-                '}';
+    public Set<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(Set<User> users) {
+        this.users = users;
     }
 
     @Override
     public String getAuthority() {
-        return role;
+        return getName();
+    }
+
+    public String toString() {
+        return name;
     }
 }
