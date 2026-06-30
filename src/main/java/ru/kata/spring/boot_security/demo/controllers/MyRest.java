@@ -21,28 +21,22 @@ import java.util.List;
 public class MyRest {
     private final UserServiceImp userService;
 
-    @Autowired
-    private StringHttpMessageConverter stringHttpMessageConverter;
-
-    @Autowired
-    private MyRest(UserServiceImp userService) {
+    public MyRest(UserServiceImp userService) {
         this.userService = userService;
     }
 
     @GetMapping(value = "/clients")
     public ResponseEntity<List<User>> read() {
         final List<User> users = userService.allUsers();
-
-        return users != null &&  !users.isEmpty()
+        return users != null && !users.isEmpty()
                 ? new ResponseEntity<>(users, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping(value = "/roles")
-    public ResponseEntity<List<Role>> readroles() {
+    public ResponseEntity<List<Role>> readRoles() {
         final List<Role> roles = userService.listRoles();
-
-        return roles != null &&  !roles.isEmpty()
+        return roles != null && !roles.isEmpty()
                 ? new ResponseEntity<>(roles, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
@@ -54,10 +48,9 @@ public class MyRest {
     }
 
     @GetMapping(value = "/authclient")
-    public ResponseEntity<User> authclient() {
+    public ResponseEntity<User> authClient() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String us=authentication.getName();
-        User user = userService.findUserByName(us);
+        User user = userService.findUserByName(authentication.getName());
         return user != null
                 ? new ResponseEntity<>(user, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -66,16 +59,15 @@ public class MyRest {
     @GetMapping(value = "/client/{id}")
     public ResponseEntity<User> read(@PathVariable(name = "id") Long id) {
         final User client = userService.findUserById(id);
-
-        return client != null
+        return client != null && client.getId() != null
                 ? new ResponseEntity<>(client, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @PutMapping(value = "/client/{id}", consumes = {"application/json"})
-    public ResponseEntity<?> update(@PathVariable(name = "id") Long id,  @RequestBody User model) {
+    @PutMapping(value = "/client/{id}")
+    public ResponseEntity<?> update(@PathVariable(name = "id") Long id, @RequestBody User model) {
+        model.setId(id);
         final boolean updated = userService.saveUser(model);
-
         return updated
                 ? new ResponseEntity<>(HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
@@ -84,7 +76,6 @@ public class MyRest {
     @DeleteMapping(value = "/delete/{id}")
     public ResponseEntity<?> delete(@PathVariable(name = "id") Long id) {
         final boolean deleted = userService.deleteUser(id);
-
         return deleted
                 ? new ResponseEntity<>(HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);

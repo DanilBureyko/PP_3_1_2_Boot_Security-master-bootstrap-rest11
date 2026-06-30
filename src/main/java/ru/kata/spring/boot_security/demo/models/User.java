@@ -45,7 +45,7 @@ public class User implements UserDetails {
         return username;
     }
 
-    public String getLastname() {
+    public String getLastName() {
         return lastname;
     }
 
@@ -73,7 +73,7 @@ public class User implements UserDetails {
         this.username = username;
     }
 
-    public void setLastname(String lastname) {
+    public void setLastName(String lastname) {
         this.lastname = lastname;
     }
 
@@ -110,11 +110,11 @@ public class User implements UserDetails {
         return roles;
     }
 
-    public String getFirstname() {
+    public String getFirstName() {
         return firstname;
     }
 
-    public void setFirstname(String firstname) {
+    public void setFirstName(String firstname) {
         this.firstname = firstname;
     }
 
